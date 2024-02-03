@@ -1,51 +1,77 @@
-
+import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+class home extends StatelessWidget {
+  const home({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+      appBar: appBar(),
+      body: Column(children: [
+        Container(
+            margin: EdgeInsets.only(top: 40, left: 20, right: 20),
+            decoration: BoxDecoration(boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.11),
+                blurRadius: 40,
+                spreadRadius: 0.0,
+              )
+            ]),
+            child: TextField(
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+              ),
+            ))
+      ]),
+    );
+  }
+
+  AppBar appBar() {
+    return AppBar(
+      backgroundColor: Colors.white,
+      title: Text(
+        "Breakfest ",
+        style: TextStyle(
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button  :',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      centerTitle: true,
+      leading: GestureDetector(
+        onTap: () {},
+        child: Container(
+          margin: EdgeInsets.all(10),
+          alignment: Alignment.center,
+          child: SvgPicture.asset(
+            'assets/icons/Arrow.svg',
+            height: 20,
+            width: 20,
+          ),
+          decoration: BoxDecoration(
+              color: Color(0xffF7F8F8),
+              borderRadius: BorderRadius.circular(10)),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      actions: [
+        GestureDetector(
+          onTap: () {},
+          child: Container(
+            margin: EdgeInsets.all(10),
+            alignment: Alignment.center,
+            width: 37,
+            child: SvgPicture.asset(
+              'assets/icons/dots.svg',
+              height: 5,
+              width: 5,
+            ),
+            decoration: BoxDecoration(
+                color: Color(0xffF7F8F8),
+                borderRadius: BorderRadius.circular(10)),
+          ),
+        ),
+      ],
     );
   }
 }
