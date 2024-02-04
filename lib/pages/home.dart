@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:simple_breakfest_flutter_project/models/category.dart';
+import 'package:simple_breakfest_flutter_project/models/diet.dart';
+import 'package:simple_breakfest_flutter_project/models/popular_model.dart';
 
 class Home extends StatefulWidget {
   Home({super.key});
@@ -11,30 +13,229 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<CategoryModel> categories = [];
-
+  List<DietModel> diets = [];
+  List<PopularDietsModel> poplarDiets = [];
   void _getCategries() {
     categories = CategoryModel.getCategories();
+  }
+
+  void _getDiets() {
+    diets = DietModel.getDiets();
+    poplarDiets = PopularDietsModel.getPopularDiets();
   }
 
   @override
   Widget build(BuildContext context) {
     _getCategries();
+    _getDiets();
     return Scaffold(
       appBar: appBar(),
       backgroundColor: Colors.white,
-      body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      body: ListView(children: [
         _SearchBox(),
-        SizedBox(
+        const SizedBox(
           height: 40,
         ),
-        _CategoriesSection()
+        _CategoriesSection(),
+        const SizedBox(
+          height: 40,
+        ),
+        _dietsSection(),
+        const SizedBox(
+          height: 40,
+        ),
+        _popularDiets(),
+        const SizedBox(
+          height: 40,
+        ),
       ]),
     );
   }
 
+  Column _popularDiets() {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(8),
+            child: Text(
+              'Popular',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600),
+            ),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          ListView.separated(
+            shrinkWrap: true,
+            padding: const EdgeInsets.only(left: 20, right: 20),
+            itemBuilder: (context, index) {
+              return Container(
+                height: 115,
+                decoration: BoxDecoration(
+                    color: poplarDiets[index].boxIsSelected
+                        ? Colors.white
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: poplarDiets[index].boxIsSelected
+                        ? [
+                            BoxShadow(
+                                color: Colors.black.withOpacity(0.07),
+                                offset: const Offset(0, 10),
+                                blurRadius: 40,
+                                spreadRadius: 0)
+                          ]
+                        : []),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SvgPicture.asset(
+                      poplarDiets[index].iconPath,
+                      width: 65,
+                      height: 65,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          poplarDiets[index].name,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                              fontSize: 16),
+                        ),
+                        Text(
+                          poplarDiets[index].level +
+                              " | " +
+                              poplarDiets[index].duration +
+                              " | " +
+                              poplarDiets[index].calorie,
+                          style: const TextStyle(
+                              color: Color(0xff7B6F72),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      ],
+                    ),
+                    /////////
+                    GestureDetector(
+                      onTap: () {
+                        print('9iw');
+                      },
+                      child: SvgPicture.asset(
+                        'assets/icons/button.svg',
+                        width: 30,
+                        height: 30,
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+            separatorBuilder: (context, index) => const SizedBox(
+              height: 15,
+            ),
+            itemCount: poplarDiets.length,
+          )
+        ],
+      );
+  }
+
+  Column _dietsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 20),
+          child: Text(
+            "Recommendation \n  for Diet",
+            style: TextStyle(
+                color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+        ),
+        const SizedBox(
+          height: 16,
+        ),
+        Container(
+          height: 240,
+          child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              itemBuilder: (context, index) {
+                return Container(
+                    width: 240,
+                    decoration: BoxDecoration(
+                        color: diets[index].boxColor.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SvgPicture.asset(diets[index].iconPath),
+                          Column(
+                            children: [
+                              Text(
+                                diets[index].name,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                    fontSize: 16),
+                              ),
+                              Text(
+                                diets[index].level +
+                                    " | " +
+                                    diets[index].duration +
+                                    " | " +
+                                    diets[index].calorie,
+                                style: const TextStyle(
+                                    color: Color(0xff7B6F72),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            height: 45,
+                            width: 130,
+                            child: Center(
+                                child: Text(
+                              'View',
+                              style: TextStyle(
+                                  color: diets[index].viewIsSelected
+                                      ? Colors.white
+                                      : const Color(0xffC5BBF2),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14),
+                            )),
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(colors: [
+                                  diets[index].viewIsSelected
+                                      ? const Color(0xff9DCEFF)
+                                      : Colors.transparent,
+                                  diets[index].viewIsSelected
+                                      ? const Color(0xff92A3FD)
+                                      : Colors.transparent,
+                                ]),
+                                borderRadius: BorderRadius.circular(20)),
+                          )
+                        ]));
+              },
+              separatorBuilder: (context, index) => const SizedBox(
+                    width: 25,
+                  ),
+              itemCount: diets.length),
+        )
+      ],
+    );
+  }
+
+  // ignore: non_constant_identifier_names
   Column _CategoriesSection() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(
+      const Padding(
         padding: EdgeInsets.only(left: 20),
         child: Text(
           'Category',
@@ -42,7 +243,7 @@ class _HomeState extends State<Home> {
               color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600),
         ),
       ),
-      SizedBox(
+      const SizedBox(
         height: 20,
       ),
       Container(
@@ -66,7 +267,7 @@ class _HomeState extends State<Home> {
                     Container(
                       height: 50,
                       width: 50,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           color: Colors.white, shape: BoxShape.circle),
                       child: SvgPicture.asset(
                         categories[index].iconPath,
@@ -77,7 +278,7 @@ class _HomeState extends State<Home> {
                     ),
                     Text(
                       categories[index].name,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontFamily: 'Poppins',
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
@@ -91,9 +292,10 @@ class _HomeState extends State<Home> {
     ]);
   }
 
+  // ignore: non_constant_identifier_names
   Container _SearchBox() {
     return Container(
-        margin: EdgeInsets.only(top: 40, left: 20, right: 20),
+        margin: const EdgeInsets.only(top: 40, left: 20, right: 20),
         decoration: BoxDecoration(boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.11),
@@ -105,13 +307,13 @@ class _HomeState extends State<Home> {
           decoration: InputDecoration(
               filled: true,
               fillColor: Colors.white,
-              prefixIcon: Icon(Icons.search),
-              suffixIcon: Icon(
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: const Icon(
                 Icons.filter_list,
               ),
               hintText: "Search for products or brands",
-              hintStyle: TextStyle(color: Colors.grey),
-              contentPadding: EdgeInsets.all(15),
+              hintStyle: const TextStyle(color: Colors.grey),
+              contentPadding: const EdgeInsets.all(15),
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide.none)),
@@ -121,7 +323,7 @@ class _HomeState extends State<Home> {
   AppBar appBar() {
     return AppBar(
       backgroundColor: Colors.white,
-      title: Text(
+      title: const Text(
         "Breakfest ",
         style: TextStyle(
             color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
@@ -130,7 +332,7 @@ class _HomeState extends State<Home> {
       leading: GestureDetector(
         onTap: () {},
         child: Container(
-          margin: EdgeInsets.all(10),
+          margin: const EdgeInsets.all(10),
           alignment: Alignment.center,
           child: SvgPicture.asset(
             'assets/icons/Arrow.svg',
@@ -138,7 +340,7 @@ class _HomeState extends State<Home> {
             width: 20,
           ),
           decoration: BoxDecoration(
-              color: Color(0xffF7F8F8),
+              color: const Color(0xffF7F8F8),
               borderRadius: BorderRadius.circular(10)),
         ),
       ),
@@ -146,7 +348,7 @@ class _HomeState extends State<Home> {
         GestureDetector(
           onTap: () {},
           child: Container(
-            margin: EdgeInsets.all(10),
+            margin: const EdgeInsets.all(10),
             alignment: Alignment.center,
             width: 37,
             child: SvgPicture.asset(
@@ -155,7 +357,7 @@ class _HomeState extends State<Home> {
               width: 5,
             ),
             decoration: BoxDecoration(
-                color: Color(0xffF7F8F8),
+                color: const Color(0xffF7F8F8),
                 borderRadius: BorderRadius.circular(10)),
           ),
         ),
